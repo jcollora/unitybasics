@@ -8,7 +8,6 @@ public class Speed_Direction : MonoBehaviour {
     void Start () {
       rb2d = GetComponent<Rigidbody2D> ();
     }
-	
 
     void Update () {
         // Change Speed
@@ -22,13 +21,13 @@ public class Speed_Direction : MonoBehaviour {
             }
         }
 
-        // Change direction
-        if (Input.GetKey(KeyCode.A)) {
-            transform.Rotate(0,0,rotateSpeed);
-        }
-        if (Input.GetKey(KeyCode.D)) {
-            transform.Rotate(0,0,-1 * rotateSpeed);
-        }
+        // Change direction based on mouse position
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 dir = mousePos - transform.position;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotateSpeed * Time.deltaTime);
+
         rb2d.velocity = transform.up * speed;
     }
 }

@@ -3,6 +3,7 @@
 public class Speed_Direction_Friction : MonoBehaviour {
     public float speed;
     public float rotateSpeed;
+    public float friction;
     private Rigidbody2D rb2d;
 
     public Vector2 movement;
@@ -10,18 +11,24 @@ public class Speed_Direction_Friction : MonoBehaviour {
     void Start () {
       rb2d = GetComponent<Rigidbody2D> ();
     }
-	
 
     void Update () {
-         // Change direction
-        if (Input.GetKey(KeyCode.LeftArrow)) {
-            transform.Rotate(0,0,rotateSpeed);
-            rb2d.AddForce(-transform.right * rotateSpeed);
+        // Change direction based on mouse position
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 dir = mousePos - transform.position;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotateSpeed * Time.deltaTime);
+
+        // Apply friction to the movement
+        Vector2 velocity = rb2d.velocity;
+        if (velocity.magnitude > 0) {
+            velocity -= friction * velocity.normalized * Time.deltaTime;
+            if (velocity.magnitude < 0.01f) {
+                velocity = Vector2.zero;
+            }
         }
-        if (Input.GetKey(KeyCode.RightArrow)) {
-            transform.Rotate(0,0,-1 * rotateSpeed);
-            rb2d.AddForce(transform.right * rotateSpeed);
-        }
+        rb2d.velocity = velocity;
 
         // Change Speed
         if (Input.GetKey(KeyCode.UpArrow)) {
@@ -29,7 +36,6 @@ public class Speed_Direction_Friction : MonoBehaviour {
         } else if (Input.GetKey(KeyCode.DownArrow)) {
             moveCharacter(-transform.up);
         }
-
     }
 
     void moveCharacter(Vector3 direction) {
