@@ -7,8 +7,8 @@ public class Player : MonoBehaviour {
     private Rigidbody2D rb2d;
     public Transform firePoint;
     public GameObject bulletPrefab;
-    private float bulletSpeed = 10f;
-    private float cooldown = 0.5f;
+    private float bulletSpeed = 1f;
+    private float cooldown = 0.01f;
     private float nextFire = 0f;
 
     void Start () {
