@@ -13,6 +13,7 @@ public class Snake : MonoBehaviour
     private List<Vector2Int> snakePositionList;
     private List<GameObject> snakeBodyList;
     private Sprite snakeBody;
+    private int foodEaten = 0;
 
     public void Setup(LevelGrid levelGrid, Sprite snakeBody)
     {
@@ -96,8 +97,15 @@ public class Snake : MonoBehaviour
             bool ateFood = levelGrid.SnakeFood(gridPos);
             if (ateFood)
             {
-                snakeSize++;
-                CreateSnakeBody();
+                foodEaten++;
+                if (foodEaten == 0) {
+                    snakeSize++;
+                } else {
+                    for(int i = 0; i < foodEaten; i++) {
+                        snakeSize++;
+                        CreateSnakeBody();
+                    }
+                }
             }
 
             if (snakePositionList.Count >= snakeSize + 1)
@@ -156,5 +164,6 @@ public class Snake : MonoBehaviour
 
         gridPos = new Vector2Int(0, 0);
         direc = new Vector2Int(1, 0);
+        foodEaten = 0;
     }
 }
